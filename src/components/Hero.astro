@@ -1,0 +1,225 @@
+---
+---
+
+<section class="relative overflow-hidden py-16 sm:py-20 border-b border-hairline dark:border-zinc-900 bg-canvas dark:bg-[#070707] transition-colors duration-200">
+  <!-- Interactive Mesh Gradient Background -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden select-none">
+    <!-- Spot 1: Develop (Blue-Teal) -->
+    <div class="absolute w-[350px] h-[350px] rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-600 opacity-[0.14] dark:opacity-[0.22] blur-[90px] -top-12 left-[10%] animate-mesh-1"></div>
+    <!-- Spot 2: Preview (Violet-Pink) -->
+    <div class="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-violet-500 to-highlight-pink opacity-[0.12] dark:opacity-[0.18] blur-[100px] -top-24 right-[15%] animate-mesh-2"></div>
+    <!-- Spot 3: Ship (Orange-Amber) -->
+    <div class="absolute w-[300px] h-[300px] rounded-full bg-gradient-to-tr from-orange-400 to-amber-500 opacity-[0.10] dark:opacity-[0.15] blur-[80px] top-10 left-[40%] animate-mesh-3"></div>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <!-- Title & Headline -->
+      <div class="lg:col-span-6 space-y-6 text-left">
+        <!-- Eyebrow banner -->
+        <div class="inline-flex items-center space-x-2 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800/80 px-2.5 py-1 rounded-full text-xs font-mono text-body dark:text-zinc-400 select-none">
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+          </span>
+          <span>Introducing AirList - SNM v1.0.</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold tracking-[-1.8px] sm:tracking-[-2.4px] text-ink dark:text-zinc-100 leading-none select-none">
+          Organize with absolute precision.
+        </h1>
+        
+        <p class="text-base sm:text-lg text-body dark:text-zinc-400 font-sans max-w-xl leading-relaxed">
+          AirList - SNM is an elegant, keyboard-friendly command-centric list planner designed for builders who value clean interfaces and responsive execution.
+        </p>
+
+        <div class="flex items-center space-x-3 pt-2">
+          <button 
+            id="hero-create-btn"
+            class="px-6 py-2.5 bg-primary text-on-primary dark:bg-zinc-100 dark:text-primary hover:bg-primary/95 dark:hover:bg-white text-sm font-sans font-medium rounded-pill shadow-level-2 hover:shadow-level-3 cursor-pointer select-none transition-all duration-200"
+          >
+            Create first task
+          </button>
+          <button 
+            id="hero-help-btn"
+            class="px-6 py-2.5 bg-white text-ink dark:bg-zinc-900 dark:text-zinc-200 border border-hairline dark:border-zinc-800 hover:border-hairline-strong dark:hover:border-zinc-700 text-sm font-sans font-medium rounded-pill shadow-level-2 cursor-pointer select-none transition-all duration-200"
+          >
+            Keyboard commands
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Dashboard Panel -->
+      <div class="lg:col-span-6 w-full">
+        <div class="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border border-hairline dark:border-zinc-850 rounded-lg p-6 sm:p-8 shadow-level-3 dark:shadow-2xl transition-colors duration-200">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xs font-mono uppercase tracking-wider text-body dark:text-zinc-400">Productivity dashboard</h2>
+            <span class="text-[10px] font-mono text-mute dark:text-zinc-500 bg-canvas-soft-2 dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-2 py-0.5 rounded-sm">LIVE UPDATING</span>
+          </div>
+
+          <!-- Quick Stats Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
+              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Total tasks</span>
+              <span id="hero-total-tasks" class="text-2xl font-mono font-semibold text-ink dark:text-zinc-100">0</span>
+            </div>
+            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
+              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Completed</span>
+              <span id="hero-completed-tasks" class="text-2xl font-mono font-semibold text-link dark:text-cyan-400">0</span>
+            </div>
+            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
+              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Pending</span>
+              <span id="hero-pending-tasks" class="text-2xl font-mono font-semibold text-warning-deep dark:text-amber-500">0</span>
+            </div>
+            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
+              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Overdue</span>
+              <span id="hero-overdue-tasks" class="text-2xl font-mono font-semibold text-error dark:text-red-500">0</span>
+            </div>
+          </div>
+
+          <!-- Radial Progress & Mini Trend Chart Combined -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+            <!-- Radial Progress Circle -->
+            <div class="sm:col-span-5 flex flex-col items-center justify-center p-2">
+              <div class="relative w-28 h-28 flex items-center justify-center">
+                <!-- SVG Circle Background & Foreground -->
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle class="text-hairline dark:text-zinc-800" stroke-width="6" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+                  <circle id="hero-score-ring" class="text-primary dark:text-cyan-400 transition-all duration-500 ease-out" stroke-width="7" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+                </svg>
+                <div class="absolute text-center">
+                  <span id="hero-score-num" class="text-xl font-mono font-semibold text-ink dark:text-zinc-100">0%</span>
+                  <span class="block text-[8px] font-mono text-mute dark:text-zinc-500 uppercase tracking-widest leading-none mt-0.5">COMPLETED</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini Sparkline Area Chart -->
+            <div class="sm:col-span-7 flex flex-col justify-between h-full space-y-2">
+              <div>
+                <span class="text-xs font-sans font-medium text-ink dark:text-zinc-200">Completion trend</span>
+                <p class="text-[11px] text-mute dark:text-zinc-500">Percentage rate over recent days.</p>
+              </div>
+              
+              <!-- Dynamic sparkline container -->
+              <div class="h-16 w-full pt-1">
+                <svg id="hero-sparkline" class="w-full h-full text-link dark:text-cyan-400" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="currentColor" stop-opacity="0.25" />
+                      <stop offset="100%" stop-color="currentColor" stop-opacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Gradient Area -->
+                  <path id="sparkline-area" fill="url(#sparkline-gradient)" d="M 0 30 L 0 30 L 20 30 L 40 30 L 60 30 L 80 30 L 100 30 Z" />
+                  <!-- Line -->
+                  <path id="sparkline-line" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M 0 30 L 20 30 L 40 30 L 60 30 L 80 30 L 100 30" />
+                </svg>
+              </div>
+
+              <!-- Sparkline labels -->
+              <div class="flex justify-between font-mono text-[9px] text-mute dark:text-zinc-500 border-t border-hairline dark:border-zinc-900 pt-1 select-none">
+                <span>7d ago</span>
+                <span>Today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Elements
+  const totalTasks = document.getElementById('hero-total-tasks');
+  const completedTasks = document.getElementById('hero-completed-tasks');
+  const pendingTasks = document.getElementById('hero-pending-tasks');
+  const overdueTasks = document.getElementById('hero-overdue-tasks');
+  const scoreRing = document.getElementById('hero-score-ring') as unknown as SVGCircleElement;
+  const scoreNum = document.getElementById('hero-score-num');
+  const sparklineLine = document.getElementById('sparkline-line');
+  const sparklineArea = document.getElementById('sparkline-area');
+
+  // Sparkline history mapping
+  let historyData = [20, 40, 35, 60, 50, 75, 0]; // percentage completed historically
+
+  function updateDashboard(event?: Event) {
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    
+    // Count stats
+    const total = tasks.length;
+    const completed = tasks.filter((t: any) => t.completed).length;
+    const pending = total - completed;
+    
+    // Check overdue
+    const todayStr = new Date().toISOString().split('T')[0];
+    const overdue = tasks.filter((t: any) => !t.completed && t.dueDate && t.dueDate < todayStr).length;
+
+    // Calculate score
+    const score = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    // Update numbers
+    if (totalTasks) totalTasks.textContent = total.toString();
+    if (completedTasks) completedTasks.textContent = completed.toString();
+    if (pendingTasks) pendingTasks.textContent = pending.toString();
+    if (overdueTasks) overdueTasks.textContent = overdue.toString();
+    if (scoreNum) scoreNum.textContent = `${score}%`;
+
+    // Header counter trigger
+    const headerCount = document.getElementById('header-active-count');
+    if (headerCount) {
+      headerCount.textContent = `${pending} pending`;
+    }
+
+    // Update radial ring
+    // Circumference = 2 * Math.PI * r = 2 * 3.14159 * 40 = 251.2
+    const circumference = 251.2;
+    if (scoreRing) {
+      const offset = circumference - (score / 100) * circumference;
+      scoreRing.style.strokeDashoffset = offset.toString();
+    }
+
+    // Update completion trend sparkline with current today's value
+    historyData[historyData.length - 1] = score;
+    renderSparkline(historyData);
+  }
+
+  function renderSparkline(data: number[]) {
+    if (!sparklineLine || !sparklineArea) return;
+
+    // Chart width = 100, height = 30 (viewBox)
+    // Map values (0-100) to svg coordinates (Y ranges from 28 to 2, X ranges from 2 to 98)
+    const points = data.map((val, idx) => {
+      const x = 2 + (idx / (data.length - 1)) * 96;
+      // Invert Y since 0 is at top in SVG coordinates
+      const y = 28 - (val / 100) * 26; 
+      return { x, y };
+    });
+
+    const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+    sparklineLine.setAttribute('d', linePath);
+
+    const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} 30 L ${points[0].x.toFixed(1)} 30 Z`;
+    sparklineArea.setAttribute('d', areaPath);
+  }
+
+  // Subscribe to storage update events
+  window.addEventListener('tasks-updated', updateDashboard);
+  window.addEventListener('storage', updateDashboard);
+
+  // Initialize
+  updateDashboard();
+
+  // Create task focus redirect
+  document.getElementById('hero-create-btn')?.addEventListener('click', () => {
+    const titleInput = document.getElementById('task-title-input');
+    titleInput?.focus();
+    titleInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // Help button triggers Command Palette with help mode
+  document.getElementById('hero-help-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('toggle-command-palette'));
+  });
+</script>

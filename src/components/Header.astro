@@ -1,0 +1,111 @@
+---
+---
+
+<header class="sticky top-0 z-40 w-full h-16 bg-white/75 dark:bg-black/75 backdrop-blur-md border-b border-hairline dark:border-zinc-900 transition-colors duration-200">
+  <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+    <!-- Logo & Suffix -->
+    <div class="flex items-center space-x-3">
+      <a href="/" class="flex items-center space-x-2 select-none group">
+        <!-- Vercel-like sleek icon (black triangle in light, white in dark) -->
+        <svg class="w-5 h-5 fill-current text-ink dark:text-white transition-transform group-hover:scale-105" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="50,15 90,85 10,85" />
+        </svg>
+        <span class="text-lg font-sans font-semibold tracking-tight text-ink dark:text-zinc-100">AirList - SNM</span>
+      </a>
+    </div>
+
+    <!-- Search / Command Palette Trigger (Desk/Tab) -->
+    <div class="hidden md:flex items-center flex-1 max-w-sm mx-8">
+      <button 
+        id="nav-search-btn"
+        class="w-full flex items-center justify-between px-3 py-1.5 bg-canvas-soft dark:bg-zinc-950 border border-hairline dark:border-zinc-800 hover:border-hairline-strong dark:hover:border-zinc-700 text-mute dark:text-zinc-500 rounded-sm text-xs text-left cursor-pointer transition-colors"
+      >
+        <div class="flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <span class="font-sans">Search or type a command...</span>
+        </div>
+        <kbd class="hidden sm:inline-block font-mono text-[10px] tracking-wide bg-canvas dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-1.5 py-0.5 rounded-sm select-none text-mute dark:text-zinc-500">
+          Ctrl K
+        </kbd>
+      </button>
+    </div>
+
+    <!-- Right Side Actions -->
+    <div class="flex items-center space-x-4">
+      <!-- Active Tasks Badge -->
+      <div id="header-active-count-container" class="hidden sm:flex items-center space-x-1.5 text-xs text-body dark:text-zinc-400">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="font-mono" id="header-active-count">0 tasks</span>
+      </div>
+
+      <!-- Divider -->
+      <span class="hidden sm:inline-block w-px h-4 bg-hairline dark:bg-zinc-800"></span>
+
+      <!-- Theme Toggle -->
+      <button 
+        id="theme-toggle"
+        aria-label="Toggle visual theme"
+        class="p-2 text-body hover:text-ink dark:text-zinc-400 dark:hover:text-white rounded-full bg-transparent hover:bg-canvas-soft dark:hover:bg-zinc-900 border border-transparent hover:border-hairline dark:hover:border-zinc-800 cursor-pointer transition-all duration-200"
+      >
+        <!-- Sun icon -->
+        <svg id="theme-toggle-light-icon" class="hidden w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+        </svg>
+        <!-- Moon icon -->
+        <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+      </button>
+
+      <!-- Git / Credit (Vercel-style button) -->
+      <a 
+        href="https://github.com" 
+        target="_blank" 
+        class="hidden sm:inline-flex items-center px-3 py-1 bg-primary text-on-primary dark:bg-zinc-100 dark:text-primary hover:bg-primary/90 dark:hover:bg-white text-xs font-sans font-medium rounded-pill tracking-tight select-none transition-colors"
+      >
+        GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Setup theme toggle interaction
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const lightIcon = document.getElementById('theme-toggle-light-icon');
+  const darkIcon = document.getElementById('theme-toggle-dark-icon');
+
+  function updateIcons() {
+    if (document.documentElement.classList.contains('dark')) {
+      lightIcon?.classList.remove('hidden');
+      darkIcon?.classList.add('hidden');
+    } else {
+      lightIcon?.classList.add('hidden');
+      darkIcon?.classList.remove('hidden');
+    }
+  }
+
+  // Initial update
+  updateIcons();
+
+  themeToggleBtn?.addEventListener('click', () => {
+    if (document.documentElement.classList.contains('dark')) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    updateIcons();
+    // Dispatch custom event so other components (charts, timers) can react to theme changes
+    window.dispatchEvent(new Event('themechange'));
+  });
+
+  // Search button click redirects focus to Command Palette
+  const navSearchBtn = document.getElementById('nav-search-btn');
+  navSearchBtn?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('toggle-command-palette'));
+  });
+</script>

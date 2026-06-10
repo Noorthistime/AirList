@@ -1,0 +1,389 @@
+---
+---
+
+<!-- Backdrop overlay (hidden by default) -->
+<div 
+  id="command-palette" 
+  class="hidden fixed inset-0 z-50 bg-black/40 dark:bg-black/65 backdrop-blur-[2px] transition-opacity duration-200"
+  role="dialog"
+  aria-modal="true"
+>
+  <!-- Modal Dialog -->
+  <div class="max-w-xl w-full mx-auto mt-[10vh] px-4">
+    <div id="palette-box" class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-850 rounded-md shadow-level-5 overflow-hidden flex flex-col transition-all duration-200 transform scale-95 opacity-0">
+      
+      <!-- Input Header -->
+      <div class="flex items-center space-x-3 border-b border-hairline dark:border-zinc-900 px-4 py-3.5">
+        <svg class="w-4 h-4 text-mute dark:text-zinc-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input 
+          id="palette-search" 
+          type="text" 
+          placeholder="Search commands or actions..." 
+          class="w-full bg-transparent border-0 outline-none text-sm font-sans text-ink dark:text-zinc-100 placeholder-mute dark:placeholder-zinc-600 focus:outline-none"
+          autocomplete="off"
+        />
+        <button id="palette-close-btn" class="text-xs text-mute hover:text-ink dark:text-zinc-500 dark:hover:text-zinc-350 cursor-pointer font-sans select-none">
+          ESC
+        </button>
+      </div>
+
+      <!-- Action items list -->
+      <div id="palette-list" class="max-h-[320px] overflow-y-auto p-2 space-y-0.5" role="listbox">
+        <!-- Add Task command -->
+        <button class="palette-item active" data-action="focus-add-task" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Add new task...</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">N</kbd>
+        </button>
+
+        <!-- Toggle theme -->
+        <button class="palette-item" data-action="toggle-theme" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Toggle dark / light theme</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">T</kbd>
+        </button>
+
+        <!-- Filter views -->
+        <button class="palette-item" data-action="filter-all" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Filter: Show all tasks</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">A</kbd>
+        </button>
+
+        <button class="palette-item" data-action="filter-active" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Filter: Show active tasks</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">D</kbd>
+        </button>
+
+        <button class="palette-item" data-action="filter-completed" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Filter: Show completed tasks</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">C</kbd>
+        </button>
+
+        <!-- Sorting -->
+        <button class="palette-item" data-action="sort-date" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Sort by due date</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">S</kbd>
+        </button>
+
+        <button class="palette-item" data-action="sort-priority" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Sort by priority</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">P</kbd>
+        </button>
+
+        <!-- Storage Utilities -->
+        <button class="palette-item" data-action="clear-completed" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Clear completed tasks</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">K</kbd>
+        </button>
+
+        <button class="palette-item" data-action="export-tasks" role="option">
+          <div class="flex items-center space-x-3">
+            <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span class="font-sans text-xs text-ink dark:text-zinc-200">Export backup file...</span>
+          </div>
+          <kbd class="font-mono text-[9px] text-mute dark:text-zinc-500 bg-canvas-soft border border-hairline dark:border-zinc-900 px-1 py-0.5 rounded-sm">E</kbd>
+        </button>
+      </div>
+
+      <!-- Navigation Help Footer -->
+      <div class="flex justify-between items-center bg-canvas-soft dark:bg-zinc-900/40 border-t border-hairline dark:border-zinc-900 px-4 py-2.5 font-mono text-[9px] text-mute dark:text-zinc-500 select-none">
+        <div class="flex items-center space-x-2">
+          <span>↑↓ to navigate</span>
+          <span>•</span>
+          <span>Enter to select</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span>Esc to exit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .palette-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    outline: none;
+  }
+  
+  .palette-item:hover, .palette-item.active {
+    background: #fafafa;
+  }
+  
+  .dark .palette-item:hover, .dark .palette-item.active {
+    background: #18181b;
+  }
+</style>
+
+<script>
+  const palette = document.getElementById('command-palette');
+  const paletteBox = document.getElementById('palette-box');
+  const searchInput = document.getElementById('palette-search') as HTMLInputElement;
+  const closeBtn = document.getElementById('palette-close-btn');
+  const itemList = document.getElementById('palette-list');
+
+  let open = false;
+
+  function getVisibleItems() {
+    return Array.from(itemList?.querySelectorAll('.palette-item:not(.hidden)') || []) as HTMLElement[];
+  }
+
+  function getActiveIndex() {
+    const items = getVisibleItems();
+    return items.findIndex(el => el.classList.contains('active'));
+  }
+
+  function setActiveItem(index: number) {
+    const items = getVisibleItems();
+    if (items.length === 0) return;
+    
+    // Boundary check
+    let targetIdx = index;
+    if (targetIdx < 0) targetIdx = items.length - 1;
+    if (targetIdx >= items.length) targetIdx = 0;
+
+    items.forEach((item, idx) => {
+      if (idx === targetIdx) {
+        item.classList.add('active');
+        item.scrollIntoView({ block: 'nearest' });
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+
+  function openPalette() {
+    if (open) return;
+    open = true;
+    palette?.classList.remove('hidden');
+    
+    // Wait for display cycle to trigger transition
+    setTimeout(() => {
+      paletteBox?.classList.remove('scale-95', 'opacity-0');
+      paletteBox?.classList.add('scale-100', 'opacity-100');
+      searchInput?.focus();
+    }, 20);
+  }
+
+  function closePalette() {
+    if (!open) return;
+    open = false;
+    paletteBox?.classList.remove('scale-100', 'opacity-100');
+    paletteBox?.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+      palette?.classList.add('hidden');
+      if (searchInput) searchInput.value = '';
+      filterItems('');
+    }, 200);
+  }
+
+  function filterItems(query: string) {
+    const items = Array.from(itemList?.querySelectorAll('.palette-item') || []) as HTMLElement[];
+    const cleanQuery = query.toLowerCase().trim();
+
+    let firstMatchIndex = -1;
+
+    items.forEach((item, idx) => {
+      const text = item.querySelector('span')?.textContent?.toLowerCase() || '';
+      if (text.includes(cleanQuery)) {
+        item.classList.remove('hidden');
+        if (firstMatchIndex === -1) firstMatchIndex = idx;
+      } else {
+        item.classList.add('hidden');
+        item.classList.remove('active');
+      }
+    });
+
+    // Update active state to the first match
+    if (firstMatchIndex !== -1) {
+      const visibleItems = getVisibleItems();
+      visibleItems.forEach((el, idx) => {
+        if (idx === 0) el.classList.add('active');
+        else el.classList.remove('active');
+      });
+    }
+  }
+
+  function runAction(action: string | null) {
+    if (!action) return;
+    
+    closePalette();
+
+    switch (action) {
+      case 'focus-add-task':
+        const addInput = document.getElementById('task-title-input');
+        addInput?.focus();
+        addInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        break;
+      case 'toggle-theme':
+        document.getElementById('theme-toggle')?.click();
+        break;
+      case 'filter-all':
+        document.getElementById('filter-btn-all')?.click();
+        break;
+      case 'filter-active':
+        document.getElementById('filter-btn-active')?.click();
+        break;
+      case 'filter-completed':
+        document.getElementById('filter-btn-completed')?.click();
+        break;
+      case 'sort-date':
+        const dateOpt = document.getElementById('sort-select') as HTMLSelectElement;
+        if (dateOpt) {
+          dateOpt.value = 'date';
+          dateOpt.dispatchEvent(new Event('change'));
+        }
+        break;
+      case 'sort-priority':
+        const prioOpt = document.getElementById('sort-select') as HTMLSelectElement;
+        if (prioOpt) {
+          prioOpt.value = 'priority';
+          prioOpt.dispatchEvent(new Event('change'));
+        }
+        break;
+      case 'clear-completed':
+        const clearBtn = document.getElementById('clear-completed-btn');
+        if (clearBtn) {
+          clearBtn.click();
+        }
+        break;
+      case 'export-tasks':
+        document.getElementById('export-btn')?.click();
+        break;
+    }
+  }
+
+  // Keyboard navigation & Shortcuts listener
+  window.addEventListener('keydown', (e) => {
+    const activeEl = document.activeElement;
+    const isSearchInput = activeEl?.id === 'palette-search';
+    const isEditingOther = activeEl && activeEl.id !== 'palette-search' && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT');
+    
+    if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && !isEditingOther)) {
+      e.preventDefault();
+      if (open) closePalette();
+      else openPalette();
+      return;
+    }
+
+    if (!open) return;
+
+    // Check single character shortcuts when search input is focused or palette is open
+    if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.length === 1) {
+      const key = e.key.toLowerCase();
+      const shortcuts: Record<string, string> = {
+        't': 'toggle-theme',
+        'n': 'focus-add-task',
+        'a': 'filter-all',
+        'd': 'filter-active',
+        'c': 'filter-completed',
+        's': 'sort-date',
+        'p': 'sort-priority',
+        'k': 'clear-completed',
+        'e': 'export-tasks'
+      };
+      
+      if (shortcuts[key]) {
+        e.preventDefault();
+        runAction(shortcuts[key]);
+        return;
+      }
+    }
+
+    if (e.key === 'Escape') {
+      closePalette();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveItem(getActiveIndex() + 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveItem(getActiveIndex() - 1);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const activeItem = itemList?.querySelector('.palette-item.active') as HTMLElement;
+      if (activeItem) {
+        runAction(activeItem.getAttribute('data-action'));
+      }
+    }
+  });
+
+  // Direct opening event (for nav triggers)
+  window.addEventListener('toggle-command-palette', () => {
+    if (open) closePalette();
+    else openPalette();
+  });
+
+  // Event handlers
+  palette?.addEventListener('click', (e) => {
+    if (e.target === palette) {
+      closePalette();
+    }
+  });
+  
+  closeBtn?.addEventListener('click', closePalette);
+  
+  searchInput?.addEventListener('input', (e) => {
+    filterItems((e.target as HTMLInputElement).value);
+  });
+
+  // Click on item
+  itemList?.addEventListener('click', (e) => {
+    const item = (e.target as HTMLElement).closest('.palette-item') as HTMLElement;
+    if (item) {
+      runAction(item.getAttribute('data-action'));
+    }
+  });
+</script>

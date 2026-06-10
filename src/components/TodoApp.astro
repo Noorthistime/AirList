@@ -1,0 +1,1121 @@
+---
+import FocusTimer from './FocusTimer.astro';
+---
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Hidden Canvas for Confetti -->
+  <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- LEFT COLUMN: Focus Timer & Widgets (4 cols) -->
+    <div class="lg:col-span-4 space-y-8">
+      
+      <!-- Embedded Focus Timer -->
+      <FocusTimer />
+
+      <!-- Category Filter / Tags Card -->
+      <div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-5 shadow-level-2">
+        <h3 class="text-xs font-mono uppercase tracking-wider text-body dark:text-zinc-400 mb-4 pb-2 border-b border-hairline dark:border-zinc-900 flex items-center justify-between">
+          <span>Filter by tags</span>
+          <span id="tags-active-indicator" class="hidden w-2 h-2 rounded-full bg-cyan-400"></span>
+        </h3>
+        
+        <!-- Interactive tags list -->
+        <div id="sidebar-tags-list" class="flex flex-wrap gap-1.5 mb-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Create tag form -->
+        <form id="add-tag-form" class="flex items-center space-x-2 pt-2 border-t border-hairline dark:border-zinc-900/60">
+          <input 
+            id="new-tag-input"
+            type="text" 
+            placeholder="New tag label..." 
+            maxlength="15"
+            class="flex-1 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-xs px-2.5 py-1.5 rounded-sm outline-none text-ink dark:text-zinc-200 placeholder-mute dark:placeholder-zinc-600 focus:border-hairline-strong dark:focus:border-zinc-700 transition-colors"
+          />
+          <button 
+            type="submit"
+            class="px-2.5 py-1.5 bg-primary text-on-primary dark:bg-zinc-200 dark:text-primary hover:bg-primary/90 text-xs font-mono rounded-sm cursor-pointer select-none transition-colors"
+          >
+            +
+          </button>
+        </form>
+      </div>
+
+      <!-- Backup, Import, and Reset Card -->
+      <div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-5 shadow-level-2">
+        <h3 class="text-xs font-mono uppercase tracking-wider text-body dark:text-zinc-400 mb-4 pb-2 border-b border-hairline dark:border-zinc-900">
+          Settings & backups
+        </h3>
+        
+        <div class="space-y-2">
+          <!-- Backup Export -->
+          <button 
+            id="export-btn"
+            class="w-full flex items-center justify-between px-3 py-2 bg-canvas-soft hover:bg-canvas-soft-2 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-xs text-body dark:text-zinc-300 rounded border border-hairline dark:border-zinc-800 transition-colors cursor-pointer"
+          >
+            <span class="font-sans">Export task list</span>
+            <span class="font-mono text-[9px] text-mute dark:text-zinc-500">JSON</span>
+          </button>
+
+          <!-- Backup Import -->
+          <div class="relative w-full">
+            <input 
+              id="import-input" 
+              type="file" 
+              accept=".json" 
+              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+              title="Import JSON Backup file"
+            />
+            <button 
+              class="w-full flex items-center justify-between px-3 py-2 bg-canvas-soft hover:bg-canvas-soft-2 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-xs text-body dark:text-zinc-300 rounded border border-hairline dark:border-zinc-800 transition-colors pointer-events-none"
+            >
+              <span class="font-sans">Import task list</span>
+              <span class="font-mono text-[9px] text-mute dark:text-zinc-500">JSON</span>
+            </button>
+          </div>
+
+          <!-- Reset Defaults -->
+          <button 
+            id="reset-btn"
+            class="w-full flex items-center justify-between px-3 py-2 bg-red-500/5 hover:bg-red-500/10 text-xs text-error border border-red-500/15 rounded transition-colors cursor-pointer"
+          >
+            <span class="font-sans">Restore default demo</span>
+            <span class="font-mono text-[9px] text-error/80">RESET</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Task Manager Workspace (8 cols) -->
+    <div class="lg:col-span-8 space-y-6">
+      
+      <!-- Creator Panel: Create new task -->
+      <div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-6 shadow-level-3">
+        <h2 class="text-xs font-mono uppercase tracking-wider text-body dark:text-zinc-400 mb-4 pb-2 border-b border-hairline dark:border-zinc-900">
+          Create new task
+        </h2>
+
+        <form id="create-task-form" class="space-y-4">
+          <!-- Title Input -->
+          <div class="space-y-1">
+            <input 
+              id="task-title-input"
+              type="text" 
+              placeholder="What needs to be done?" 
+              required
+              class="w-full bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-sm font-sans font-medium px-4 py-2.5 rounded-sm outline-none text-ink dark:text-zinc-100 placeholder-mute dark:placeholder-zinc-550 focus:border-hairline-strong dark:focus:border-zinc-700 transition-colors"
+            />
+          </div>
+
+          <!-- Description Textarea -->
+          <div class="space-y-1">
+            <textarea 
+              id="task-desc-input"
+              placeholder="Add description or context... (optional)" 
+              rows="2"
+              class="w-full bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-xs font-sans px-4 py-2 rounded-sm outline-none text-ink dark:text-zinc-200 placeholder-mute dark:placeholder-zinc-600 focus:border-hairline-strong dark:focus:border-zinc-700 transition-colors resize-y min-h-[50px]"
+            ></textarea>
+          </div>
+
+          <!-- Metadata Parameters (Due date, priority, tags) -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <!-- Due Date Picker -->
+            <div class="flex items-center space-x-2 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-3 py-1.5 rounded-sm">
+              <svg class="w-3.5 h-3.5 text-mute dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <input 
+                id="task-date-input"
+                type="date"
+                class="bg-transparent border-0 outline-none text-xs font-mono text-body dark:text-zinc-350 p-0 focus:ring-0 cursor-pointer"
+              />
+            </div>
+
+            <!-- Priority Select -->
+            <div class="flex items-center space-x-2 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-3 py-1.5 rounded-sm">
+              <span class="text-xs font-mono text-mute dark:text-zinc-500 uppercase">Priority:</span>
+              <select 
+                id="task-priority-input"
+                class="bg-transparent border-0 outline-none text-xs font-mono text-body dark:text-zinc-350 p-0 focus:ring-0 cursor-pointer"
+              >
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <!-- Tags picker dropdown button -->
+            <div class="relative" id="tag-picker-container">
+              <button 
+                id="tag-picker-trigger"
+                type="button"
+                class="flex items-center space-x-2 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-3 py-1.5 rounded-sm text-xs font-sans text-body dark:text-zinc-350 cursor-pointer"
+              >
+                <svg class="w-3.5 h-3.5 text-mute dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span id="selected-tags-label">Tags (0)</span>
+              </button>
+              
+              <!-- Tag Picker popover -->
+              <div 
+                id="tag-picker-popover" 
+                class="hidden absolute left-0 mt-1 w-48 bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-850 rounded-sm shadow-lg p-2.5 z-20 space-y-1.5"
+              >
+                <div class="text-[10px] font-mono text-mute dark:text-zinc-500 uppercase tracking-wider pb-1.5 border-b border-hairline dark:border-zinc-900">Choose tags</div>
+                <div id="popover-tags-checkboxes" class="max-h-36 overflow-y-auto space-y-1.5 py-1">
+                  <!-- Tag checkboxes injected by JS -->
+                </div>
+              </div>
+            </div>
+
+            <div class="flex-grow"></div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit"
+              class="px-5 py-1.5 bg-primary text-on-primary dark:bg-zinc-100 dark:text-primary hover:bg-primary/95 dark:hover:bg-white text-xs font-sans font-medium rounded-pill cursor-pointer select-none transition-colors"
+            >
+              Add task.
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filters & Sorting Workspace Toolbar -->
+      <div class="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border border-hairline dark:border-zinc-900 rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-level-2">
+        <!-- Search bar input -->
+        <div class="relative w-full sm:max-w-xs">
+          <input 
+            id="list-search"
+            type="text" 
+            placeholder="Search tasks..." 
+            class="w-full bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-xs px-3 py-1.5 pl-8 rounded-sm outline-none text-ink dark:text-zinc-200 placeholder-mute dark:placeholder-zinc-650 focus:border-hairline-strong dark:focus:border-zinc-700 transition-colors"
+          />
+          <svg class="absolute left-2.5 top-2 w-3.5 h-3.5 text-mute dark:text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+
+        <!-- Status Filter tabs -->
+        <div class="flex items-center space-x-1.5 bg-canvas-soft-2 dark:bg-zinc-900/60 p-0.5 rounded border border-hairline dark:border-zinc-800/80 w-full sm:w-auto">
+          <button id="filter-btn-all" class="flex-1 sm:flex-none text-[11px] font-sans font-medium py-1 px-3 rounded text-ink dark:text-zinc-100 bg-white dark:bg-zinc-800 border border-hairline dark:border-zinc-700 cursor-pointer select-none transition-all">All</button>
+          <button id="filter-btn-active" class="flex-1 sm:flex-none text-[11px] font-sans font-medium py-1 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">Active</button>
+          <button id="filter-btn-completed" class="flex-1 sm:flex-none text-[11px] font-sans font-medium py-1 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">Completed</button>
+          <button id="filter-btn-overdue" class="flex-1 sm:flex-none text-[11px] font-sans font-medium py-1 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">Overdue</button>
+        </div>
+
+        <!-- Sort Select and Clear Completed button -->
+        <div class="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
+          <!-- Sort -->
+          <div class="flex items-center space-x-1 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-2 py-1 rounded">
+            <span class="text-[10px] font-mono text-mute dark:text-zinc-500 uppercase">Sort:</span>
+            <select 
+              id="sort-select"
+              class="bg-transparent border-0 outline-none text-[11px] font-sans text-body dark:text-zinc-350 p-0 focus:ring-0 cursor-pointer"
+            >
+              <option value="added">Date added</option>
+              <option value="priority">Priority</option>
+              <option value="date">Due date</option>
+            </select>
+          </div>
+
+          <!-- Clear completed button -->
+          <button 
+            id="clear-completed-btn"
+            class="text-[11px] font-sans font-medium text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 px-2.5 py-1 bg-transparent hover:bg-canvas-soft dark:hover:bg-zinc-900 rounded border border-transparent hover:border-hairline dark:hover:border-zinc-800 cursor-pointer select-none transition-all"
+          >
+            Clear completed
+          </button>
+        </div>
+      </div>
+
+      <!-- Task Lists Workspace Container -->
+      <div id="task-list-wrapper" class="space-y-4">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Interface definitions
+  interface Subtask {
+    id: string;
+    title: string;
+    completed: boolean;
+  }
+
+  interface Task {
+    id: string;
+    title: string;
+    description: string;
+    priority: 'high' | 'medium' | 'low';
+    tags: string[];
+    dueDate: string;
+    completed: boolean;
+    pinned: boolean;
+    focusCount: number;
+    subtasks: Subtask[];
+    createdAt: string;
+  }
+
+  // Preloaded Demonstration Tasks
+  const DEMO_TASKS: Task[] = [
+    {
+      id: 'demo-1',
+      title: 'Configure Vercel-inspired theme styling',
+      description: 'Apply contrast canvas fills, geometric display typography (Inter), monospaced caption labels, and subtle stacked shadows.',
+      priority: 'high',
+      tags: ['Design', 'Work'],
+      dueDate: new Date(Date.now() + 86400000 * 1).toISOString().split('T')[0], // 1 day out
+      completed: false,
+      pinned: true,
+      focusCount: 0,
+      subtasks: [
+        { id: 'sub-1-1', title: 'Import Google Fonts', completed: true },
+        { id: 'sub-1-2', title: 'Define custom @theme variables', completed: false },
+        { id: 'sub-1-3', title: 'Implement animated mesh background', completed: false }
+      ],
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'demo-2',
+      title: 'Build AirList - SNM MVP structure with Astro',
+      description: 'Create components for header, hero stats, Pomodoro timer, command palette, and interactive tasks wrapper.',
+      priority: 'medium',
+      tags: ['Work', 'Coding'],
+      dueDate: new Date().toISOString().split('T')[0], // Today
+      completed: true,
+      pinned: false,
+      focusCount: 1,
+      subtasks: [
+        { id: 'sub-2-1', title: 'Install Astro and Tailwind v4', completed: true },
+        { id: 'sub-2-2', title: 'Define Layout skeleton', completed: true }
+      ],
+      createdAt: new Date(Date.now() - 86400000).toISOString()
+    },
+    {
+      id: 'demo-3',
+      title: 'Perform focus session with Pomodoro timer',
+      description: 'Practice 25 minutes of deep focus linked with a selected active list item. Synthesizer buzzer notifies when complete.',
+      priority: 'low',
+      tags: ['Health'],
+      dueDate: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0], // Overdue
+      completed: false,
+      pinned: false,
+      focusCount: 0,
+      subtasks: [
+        { id: 'sub-3-1', title: 'Choose a target task in widget select list', completed: false },
+        { id: 'sub-3-2', title: 'Complete a full focus cycle', completed: false }
+      ],
+      createdAt: new Date(Date.now() - 86400000 * 2).toISOString()
+    }
+  ];
+
+  // State
+  let tasks: Task[] = [];
+  let customTags: string[] = ['Design', 'Work', 'Coding', 'Health', 'Personal'];
+  let activeTagFilter: string | null = null;
+  let activeStatusFilter: 'all' | 'active' | 'completed' | 'overdue' = 'all';
+  let activeSortOption: 'added' | 'priority' | 'date' = 'added';
+  let searchQuery = '';
+
+  // Elements
+  const taskForm = document.getElementById('create-task-form') as HTMLFormElement;
+  const taskTitleInput = document.getElementById('task-title-input') as HTMLInputElement;
+  const taskDescInput = document.getElementById('task-desc-input') as HTMLTextAreaElement;
+  const taskDateInput = document.getElementById('task-date-input') as HTMLInputElement;
+  const taskPriorityInput = document.getElementById('task-priority-input') as HTMLSelectElement;
+  const taskListWrapper = document.getElementById('task-list-wrapper');
+
+  const tagPickerTrigger = document.getElementById('tag-picker-trigger');
+  const tagPickerPopover = document.getElementById('tag-picker-popover');
+  const popoverTagsCheckboxes = document.getElementById('popover-tags-checkboxes');
+  const selectedTagsLabel = document.getElementById('selected-tags-label');
+  const sidebarTagsList = document.getElementById('sidebar-tags-list');
+  const addTagForm = document.getElementById('add-tag-form') as HTMLFormElement;
+  const newTagInput = document.getElementById('new-tag-input') as HTMLInputElement;
+  
+  const listSearch = document.getElementById('list-search') as HTMLInputElement;
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+  const clearCompletedBtn = document.getElementById('clear-completed-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const exportBtn = document.getElementById('export-btn');
+  const importInput = document.getElementById('import-input') as HTMLInputElement;
+
+  // Filter Buttons
+  const filterBtnAll = document.getElementById('filter-btn-all');
+  const filterBtnActive = document.getElementById('filter-btn-active');
+  const filterBtnCompleted = document.getElementById('filter-btn-completed');
+  const filterBtnOverdue = document.getElementById('filter-btn-overdue');
+
+  // Load from LocalStorage
+  function loadData() {
+    const storedTasks = localStorage.getItem('tasks');
+    const storedTags = localStorage.getItem('custom-tags');
+
+    if (storedTasks) {
+      tasks = JSON.parse(storedTasks);
+    } else {
+      tasks = [...DEMO_TASKS];
+      saveTasks();
+    }
+
+    if (storedTags) {
+      customTags = JSON.parse(storedTags);
+    } else {
+      saveTags();
+    }
+  }
+
+  function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    window.dispatchEvent(new Event('tasks-updated'));
+  }
+
+  function saveTags() {
+    localStorage.setItem('custom-tags', JSON.stringify(customTags));
+  }
+
+  // Canvas Confetti Particles
+  function triggerConfetti(clientX: number, clientY: number) {
+    const canvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles: any[] = [];
+    const colors = ['#00dfd8', '#7928ca', '#ff0080', '#ff4d4d', '#f9cb28'];
+
+    for (let i = 0; i < 40; i++) {
+      particles.push({
+        x: clientX,
+        y: clientY,
+        vx: (Math.random() - 0.5) * 8,
+        vy: (Math.random() - 0.7) * 8 - 4, // Shoot upwards
+        size: Math.random() * 4 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1.0,
+        decay: Math.random() * 0.02 + 0.015
+      });
+    }
+
+    function frame() {
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+
+      particles.forEach(p => {
+        if (p.alpha > 0) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.16; // gravity
+          p.alpha -= p.decay;
+          
+          ctx!.globalAlpha = Math.max(0, p.alpha);
+          ctx!.fillStyle = p.color;
+          ctx!.beginPath();
+          ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx!.fill();
+          alive = true;
+        }
+      });
+
+      if (alive) {
+        requestAnimationFrame(frame);
+      }
+    }
+    frame();
+  }
+
+  // Populate UI elements
+  function renderTags() {
+    // 1. In form popover picker
+    if (popoverTagsCheckboxes) {
+      popoverTagsCheckboxes.innerHTML = '';
+      customTags.forEach(tag => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center space-x-2';
+        div.innerHTML = `
+          <input type="checkbox" id="popover-tag-${tag}" value="${tag}" class="tag-checkbox-input w-3 h-3 text-primary dark:text-cyan-400 bg-canvas-soft border-hairline dark:border-zinc-800 rounded focus:ring-0 cursor-pointer" />
+          <label for="popover-tag-${tag}" class="font-mono text-[11px] text-body dark:text-zinc-350 select-none cursor-pointer">${tag}</label>
+        `;
+        popoverTagsCheckboxes.appendChild(div);
+      });
+
+      // Hook events
+      popoverTagsCheckboxes.querySelectorAll('.tag-checkbox-input').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedTagsLabel);
+      });
+    }
+
+    // 2. In sidebar filter panel
+    if (sidebarTagsList) {
+      sidebarTagsList.innerHTML = '';
+      
+      customTags.forEach(tag => {
+        // Count active tasks for this tag
+        const count = tasks.filter(t => !t.completed && t.tags.includes(tag)).length;
+        const isActive = activeTagFilter === tag;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `font-mono text-[10px] px-2.5 py-1 rounded-sm border cursor-pointer select-none transition-all flex items-center space-x-1.5 ${
+          isActive 
+            ? 'bg-primary border-primary text-on-primary dark:bg-zinc-100 dark:border-zinc-100 dark:text-primary' 
+            : 'bg-canvas-soft dark:bg-zinc-900 border-hairline dark:border-zinc-800 text-body dark:text-zinc-400 hover:border-hairline-strong dark:hover:border-zinc-700'
+        }`;
+        
+        button.innerHTML = `
+          <span>${tag}</span>
+          <span class="text-[8px] font-sans opacity-70">(${count})</span>
+        `;
+        
+        button.addEventListener('click', () => {
+          if (activeTagFilter === tag) {
+            activeTagFilter = null; // deselect
+            document.getElementById('tags-active-indicator')?.classList.add('hidden');
+          } else {
+            activeTagFilter = tag;
+            document.getElementById('tags-active-indicator')?.classList.remove('hidden');
+          }
+          renderTags();
+          renderTasks();
+        });
+
+        sidebarTagsList.appendChild(button);
+      });
+    }
+  }
+
+  function updateSelectedTagsLabel() {
+    const selected = getSelectedTags();
+    if (selectedTagsLabel) {
+      selectedTagsLabel.textContent = `Tags (${selected.length})`;
+    }
+  }
+
+  function getSelectedTags(): string[] {
+    const checked = popoverTagsCheckboxes?.querySelectorAll('.tag-checkbox-input:checked') || [];
+    return Array.from(checked).map((el: any) => el.value);
+  }
+
+  function clearFormTagSelection() {
+    const checked = popoverTagsCheckboxes?.querySelectorAll('.tag-checkbox-input:checked') || [];
+    checked.forEach((el: any) => {
+      el.checked = false;
+    });
+    updateSelectedTagsLabel();
+  }
+
+  // Create Task Submission
+  taskForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = taskTitleInput.value.trim();
+    const description = taskDescInput.value.trim();
+    const dueDate = taskDateInput.value;
+    const priority = taskPriorityInput.value as 'high' | 'medium' | 'low';
+    const selectedTags = getSelectedTags();
+
+    if (!title) return;
+
+    const newTask: Task = {
+      id: Date.now().toString(),
+      title,
+      description,
+      priority,
+      tags: selectedTags,
+      dueDate,
+      completed: false,
+      pinned: false,
+      focusCount: 0,
+      subtasks: [],
+      createdAt: new Date().toISOString()
+    };
+
+    tasks.unshift(newTask);
+    saveTasks();
+    
+    // Reset inputs
+    taskTitleInput.value = '';
+    taskDescInput.value = '';
+    taskDateInput.value = '';
+    taskPriorityInput.value = 'medium';
+    clearFormTagSelection();
+
+    renderTasks();
+    renderTags(); // update sidebar tag counts
+  });
+
+  // Toggle dropdown popover
+  tagPickerTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tagPickerPopover?.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (tagPickerPopover && !tagPickerPopover.contains(e.target as Node) && e.target !== tagPickerTrigger) {
+      tagPickerPopover.classList.add('hidden');
+    }
+  });
+
+  // Adding custom tag via sidebar form
+  addTagForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = newTagInput.value.trim();
+    if (val && !customTags.includes(val)) {
+      customTags.push(val);
+      saveTags();
+      newTagInput.value = '';
+      renderTags();
+    }
+  });
+
+  // Task Actions
+  function toggleTaskComplete(id: string, clientX?: number, clientY?: number) {
+    const idx = tasks.findIndex(t => t.id === id);
+    if (idx !== -1) {
+      tasks[idx].completed = !tasks[idx].completed;
+      saveTasks();
+
+      // Trigger Confetti if completed and coordinates are available
+      if (tasks[idx].completed && clientX && clientY) {
+        triggerConfetti(clientX, clientY);
+      }
+
+      renderTasks();
+      renderTags(); // count updates
+    }
+  }
+
+  function toggleTaskPinned(id: string) {
+    const idx = tasks.findIndex(t => t.id === id);
+    if (idx !== -1) {
+      tasks[idx].pinned = !tasks[idx].pinned;
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  function deleteTask(id: string) {
+    const el = document.getElementById(`task-card-${id}`);
+    if (el) {
+      // Add animate class first
+      el.classList.add('opacity-0', '-translate-x-4');
+      setTimeout(() => {
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        renderTasks();
+        renderTags();
+      }, 200);
+    }
+  }
+
+  function startFocusOnTask(id: string) {
+    const taskSelect = document.getElementById('timer-task-select') as HTMLSelectElement;
+    if (taskSelect) {
+      // Ensure element options are updated
+      window.dispatchEvent(new Event('tasks-updated'));
+      taskSelect.value = id;
+      
+      // Focus timer section and scroll
+      const timerBtn = document.getElementById('timer-start-btn');
+      timerBtn?.focus();
+      timerBtn?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Visual flash
+      const pulseDiv = document.getElementById('timer-pulse');
+      pulseDiv?.classList.add('bg-cyan-500/20');
+      setTimeout(() => pulseDiv?.classList.remove('bg-cyan-500/20'), 1000);
+    }
+  }
+
+  // Subtask Interactions
+  function toggleSubtaskComplete(taskId: string, subtaskId: string) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      const sub = task.subtasks.find(s => s.id === subtaskId);
+      if (sub) {
+        sub.completed = !sub.completed;
+        saveTasks();
+        renderTasks();
+      }
+    }
+  }
+
+  function addSubtask(taskId: string, title: string) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task && title.trim()) {
+      task.subtasks.push({
+        id: Date.now().toString(),
+        title: title.trim(),
+        completed: false
+      });
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  function deleteSubtask(taskId: string, subtaskId: string) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      task.subtasks = task.subtasks.filter(s => s.id !== subtaskId);
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  // Render main tasks list
+  function renderTasks() {
+    if (!taskListWrapper) return;
+
+    // Filter Tasks
+    let filtered = tasks;
+
+    // 1. Search Query
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(t => t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q));
+    }
+
+    // 2. Sidebar Tag Filter
+    if (activeTagFilter) {
+      filtered = filtered.filter(t => t.tags.includes(activeTagFilter!));
+    }
+
+    // 3. Status Tab Filter
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (activeStatusFilter === 'active') {
+      filtered = filtered.filter(t => !t.completed);
+    } else if (activeStatusFilter === 'completed') {
+      filtered = filtered.filter(t => t.completed);
+    } else if (activeStatusFilter === 'overdue') {
+      filtered = filtered.filter(t => !t.completed && t.dueDate && t.dueDate < todayStr);
+    }
+
+    // Sort Tasks
+    // Rules: Pinned always sit at the top. Below that, sort by activeSortOption
+    filtered.sort((a, b) => {
+      // Pinned logic
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+
+      // Rest sorting options
+      if (activeSortOption === 'added') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // Newest first
+      } else if (activeSortOption === 'priority') {
+        const priorities = { high: 3, medium: 2, low: 1 };
+        return priorities[b.priority] - priorities[a.priority]; // Highest first
+      } else if (activeSortOption === 'date') {
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(); // Earliest due first
+      }
+      return 0;
+    });
+
+    // Handle empty state
+    if (filtered.length === 0) {
+      taskListWrapper.innerHTML = `
+        <div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-12 text-center shadow-level-1 transition-colors">
+          <svg class="w-10 h-10 text-mute dark:text-zinc-650 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          <span class="text-xs font-mono uppercase tracking-wider text-body dark:text-zinc-400 block mb-1">No tasks found</span>
+          <p class="text-[11px] text-mute dark:text-zinc-500 max-w-xs mx-auto">Create a new task, adjust filters, or type command in palette to clear constraints.</p>
+        </div>
+      `;
+      return;
+    }
+
+    taskListWrapper.innerHTML = '';
+
+    filtered.forEach(task => {
+      const card = document.createElement('div');
+      card.id = `task-card-${task.id}`;
+      card.className = `bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-5 shadow-level-2 hover:shadow-level-3 transition-all duration-200 ${
+        task.completed ? 'opacity-85' : ''
+      }`;
+
+      // Calculate progress stats for subtasks
+      const totalSubs = task.subtasks.length;
+      const completedSubs = task.subtasks.filter(s => s.completed).length;
+      const pctSubs = totalSubs > 0 ? Math.round((completedSubs / totalSubs) * 100) : 0;
+      
+      // Determine due date text & style
+      let dateText = '';
+      let dateOverdue = false;
+      if (task.dueDate) {
+        const parts = task.dueDate.split('-');
+        const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        dateText = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        
+        const todayNoTime = new Date();
+        todayNoTime.setHours(0, 0, 0, 0);
+        if (dateObj < todayNoTime && !task.completed) {
+          dateOverdue = true;
+        }
+      }
+
+      // Priority classes
+      const prioStyles = {
+        high: 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-950/30',
+        medium: 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-950/30',
+        low: 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-950/30'
+      };
+
+      // HTML template structure
+      card.innerHTML = `
+        <div class="flex items-start justify-between gap-4">
+          <!-- Checkbox and Title area -->
+          <div class="flex items-start space-x-3.5 flex-1 min-w-0">
+            <!-- Custom animated checkbox wrapper -->
+            <button 
+              data-complete-btn-id="${task.id}"
+              class="mt-1 flex-shrink-0 w-4.5 h-4.5 rounded-sm border flex items-center justify-center transition-all cursor-pointer ${
+                task.completed 
+                  ? 'bg-primary border-primary dark:bg-zinc-100 dark:border-zinc-100 text-on-primary dark:text-primary' 
+                  : 'bg-canvas-soft border-hairline hover:border-hairline-strong dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-zinc-700'
+              }"
+            >
+              ${task.completed ? `
+                <svg class="w-3 h-3 fill-none stroke-current" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ` : ''}
+            </button>
+
+            <!-- Text Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center flex-wrap gap-2 mb-1.5">
+                <!-- Pin icon if pinned -->
+                ${task.pinned ? `
+                  <svg class="w-3.5 h-3.5 text-link dark:text-cyan-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6l.8.8.8-.8v-6H18v-2l-2-2z"/>
+                  </svg>
+                ` : ''}
+                
+                <!-- Priority Badge -->
+                <span class="font-mono text-[9px] px-1.5 py-0.5 rounded-sm uppercase tracking-wide ${prioStyles[task.priority]}">
+                  ${task.priority}
+                </span>
+
+                <!-- Due Date Badge -->
+                ${task.dueDate ? `
+                  <span class="font-mono text-[9px] flex items-center space-x-1 px-1.5 py-0.5 rounded-sm border ${
+                    dateOverdue 
+                      ? 'bg-red-500/5 text-error border-red-500/10' 
+                      : 'bg-canvas-soft dark:bg-zinc-900 border-hairline dark:border-zinc-800 text-mute dark:text-zinc-400'
+                  }">
+                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>${dateText}${dateOverdue ? ' (Overdue)' : ''}</span>
+                  </span>
+                ` : ''}
+
+                <!-- Tags List -->
+                ${task.tags.map(tag => `
+                  <span class="font-mono text-[9px] bg-canvas-soft-2 dark:bg-zinc-900/60 border border-hairline dark:border-zinc-850 px-1.5 py-0.5 rounded-sm text-body dark:text-zinc-400 select-none">
+                    #${tag}
+                  </span>
+                `).join('')}
+              </div>
+
+              <!-- Title -->
+              <h3 class="text-sm font-sans font-medium text-ink dark:text-zinc-100 break-words tracking-tight ${
+                task.completed ? 'line-through text-mute dark:text-zinc-500' : ''
+              }">
+                ${task.title}
+              </h3>
+
+              <!-- Description -->
+              ${task.description ? `
+                <p class="text-xs text-body dark:text-zinc-400 font-sans mt-2 break-words leading-relaxed max-w-2xl">
+                  ${task.description}
+                </p>
+              ` : ''}
+
+              <!-- Focus timer statistics badge if focused -->
+              ${task.focusCount > 0 ? `
+                <div class="inline-flex items-center space-x-1 bg-cyan-400/5 dark:bg-cyan-400/10 border border-cyan-400/15 rounded px-2 py-0.5 mt-2.5 font-mono text-[9px] text-cyan-600 dark:text-cyan-400 select-none">
+                  <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>focused ${task.focusCount}x</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Controls Action buttons right -->
+          <div class="flex items-center space-x-1 flex-shrink-0 self-start mt-0.5">
+            <!-- Focus action -->
+            ${!task.completed ? `
+              <button 
+                data-focus-btn-id="${task.id}"
+                title="Focus on this task"
+                class="p-1 text-mute hover:text-cyan-500 dark:hover:text-cyan-400 bg-transparent hover:bg-canvas-soft dark:hover:bg-zinc-900 border border-transparent hover:border-hairline dark:hover:border-zinc-800 rounded cursor-pointer transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                </svg>
+              </button>
+            ` : ''}
+
+            <!-- Pin action -->
+            <button 
+              data-pin-btn-id="${task.id}"
+              title="${task.pinned ? 'Unpin task' : 'Pin task to top'}"
+              class="p-1 ${task.pinned ? 'text-link dark:text-cyan-400' : 'text-mute hover:text-ink dark:hover:text-zinc-200'} bg-transparent hover:bg-canvas-soft dark:hover:bg-zinc-900 border border-transparent hover:border-hairline dark:hover:border-zinc-800 rounded cursor-pointer transition-colors"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6l.8.8.8-.8v-6H18v-2l-2-2z"/>
+              </svg>
+            </button>
+
+            <!-- Delete action -->
+            <button 
+              data-delete-btn-id="${task.id}"
+              title="Delete task"
+              class="p-1 text-mute hover:text-error dark:hover:text-red-400 bg-transparent hover:bg-canvas-soft dark:hover:bg-zinc-900 border border-transparent hover:border-hairline dark:hover:border-zinc-800 rounded cursor-pointer transition-colors"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7M5 7h14m-14 0l.867-12.142A2 2 0 017.862 3h8.276a2 2 0 011.995 1.858L20 7M9 11v6m6-6v6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Subtasks Checklist Section -->
+        <div class="mt-4 pt-4 border-t border-hairline dark:border-zinc-900/60">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono text-mute dark:text-zinc-500 uppercase tracking-wider">Subtasks checklist</span>
+            <span class="text-[10px] font-mono text-body dark:text-zinc-400">${completedSubs}/${totalSubs} (${pctSubs}%)</span>
+          </div>
+
+          <!-- Progress Bar -->
+          ${totalSubs > 0 ? `
+            <div class="w-full h-1 bg-canvas-soft-2 dark:bg-zinc-900 rounded-full overflow-hidden mb-3.5">
+              <div class="bg-primary dark:bg-cyan-400 h-full transition-all duration-300" style="width: ${pctSubs}%"></div>
+            </div>
+          ` : ''}
+
+          <!-- Subtasks Items list -->
+          <div class="space-y-1.5 pl-1.5" id="subtask-list-${task.id}">
+            ${task.subtasks.map(sub => `
+              <div class="flex items-center justify-between group/sub">
+                <div class="flex items-center space-x-2.5">
+                  <button 
+                    data-sub-task-id="${task.id}" data-sub-item-id="${sub.id}"
+                    class="w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition-all cursor-pointer ${
+                      sub.completed 
+                        ? 'bg-zinc-500 border-zinc-500 dark:bg-zinc-700 dark:border-zinc-700 text-white' 
+                        : 'bg-canvas-soft border-hairline hover:border-hairline-strong dark:bg-zinc-900 dark:border-zinc-800'
+                    }"
+                  >
+                    ${sub.completed ? `
+                      <svg class="w-2.5 h-2.5 fill-none stroke-current" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ` : ''}
+                  </button>
+                  <span class="text-[11px] font-sans text-body dark:text-zinc-350 break-all ${
+                    sub.completed ? 'line-through text-mute dark:text-zinc-500' : ''
+                  }">
+                    ${sub.title}
+                  </span>
+                </div>
+                <button 
+                  data-sub-delete-task-id="${task.id}" data-sub-delete-item-id="${sub.id}"
+                  class="opacity-0 group-hover/sub:opacity-100 p-0.5 text-mute hover:text-error rounded cursor-pointer transition-all"
+                >
+                  <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Add subtask input inline -->
+          <form data-sub-form-id="${task.id}" class="flex items-center space-x-2 mt-3.5 pl-1.5">
+            <input 
+              type="text" 
+              placeholder="+ Add a subtask" 
+              required
+              class="flex-1 bg-transparent border-b border-hairline dark:border-zinc-900 hover:border-hairline-strong dark:hover:border-zinc-800 text-[11px] font-sans px-1 py-1 rounded-none outline-none text-body dark:text-zinc-300 placeholder-mute dark:placeholder-zinc-600 focus:outline-none focus:border-hairline-strong dark:focus:border-zinc-700 transition-colors"
+            />
+            <button 
+              type="submit"
+              class="px-2 py-0.5 bg-canvas hover:bg-canvas-soft-2 dark:bg-zinc-900 dark:hover:bg-zinc-850 text-mute hover:text-ink dark:text-zinc-500 dark:hover:text-zinc-300 text-[10px] font-mono border border-hairline dark:border-zinc-800 rounded-sm transition-colors cursor-pointer"
+            >
+              Add
+            </button>
+          </form>
+        </div>
+      `;
+
+      // Event listeners setup inside the list
+      // 1. Completion Toggle
+      card.querySelector(`[data-complete-btn-id="${task.id}"]`)?.addEventListener('click', (e) => {
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        toggleTaskComplete(task.id, rect.left + rect.width / 2, rect.top + rect.height / 2);
+      });
+
+      // 2. Pin Toggle
+      card.querySelector(`[data-pin-btn-id="${task.id}"]`)?.addEventListener('click', () => {
+        toggleTaskPinned(task.id);
+      });
+
+      // 3. Delete Task
+      card.querySelector(`[data-delete-btn-id="${task.id}"]`)?.addEventListener('click', () => {
+        deleteTask(task.id);
+      });
+
+      // 4. Focus trigger
+      card.querySelector(`[data-focus-btn-id="${task.id}"]`)?.addEventListener('click', () => {
+        startFocusOnTask(task.id);
+      });
+
+      // 5. Subtask completes check click
+      card.querySelectorAll(`[data-sub-item-id]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          const taskId = btn.getAttribute('data-sub-task-id')!;
+          const subId = btn.getAttribute('data-sub-item-id')!;
+          toggleSubtaskComplete(taskId, subId);
+        });
+      });
+
+      // 6. Subtask deletes click
+      card.querySelectorAll(`[data-sub-delete-item-id]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+          const taskId = btn.getAttribute('data-sub-delete-task-id')!;
+          const subId = btn.getAttribute('data-sub-delete-item-id')!;
+          deleteSubtask(taskId, subId);
+        });
+      });
+
+      // 7. Add Subtask form submit
+      card.querySelector(`[data-sub-form-id="${task.id}"]`)?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const form = e.currentTarget as HTMLFormElement;
+        const input = form.querySelector('input') as HTMLInputElement;
+        const val = input.value.trim();
+        if (val) {
+          addSubtask(task.id, val);
+          input.value = '';
+        }
+      });
+
+      taskListWrapper.appendChild(card);
+    });
+  }
+
+  // Filter Action Toggles
+  function setStatusFilter(filter: typeof activeStatusFilter, btn: HTMLElement | null) {
+    [filterBtnAll, filterBtnActive, filterBtnCompleted, filterBtnOverdue].forEach(b => {
+      b?.classList.remove('bg-white', 'dark:bg-zinc-800', 'border', 'border-hairline', 'dark:border-zinc-700', 'text-ink', 'dark:text-zinc-100');
+      b?.classList.add('text-mute', 'dark:text-zinc-400');
+    });
+
+    btn?.classList.remove('text-mute', 'dark:text-zinc-400');
+    btn?.classList.add('bg-white', 'dark:bg-zinc-800', 'border', 'border-hairline', 'dark:border-zinc-700', 'text-ink', 'dark:text-zinc-100');
+
+    activeStatusFilter = filter;
+    renderTasks();
+  }
+
+  filterBtnAll?.addEventListener('click', () => setStatusFilter('all', filterBtnAll));
+  filterBtnActive?.addEventListener('click', () => setStatusFilter('active', filterBtnActive));
+  filterBtnCompleted?.addEventListener('click', () => setStatusFilter('completed', filterBtnCompleted));
+  filterBtnOverdue?.addEventListener('click', () => setStatusFilter('overdue', filterBtnOverdue));
+
+  // Search input change
+  listSearch?.addEventListener('input', (e) => {
+    searchQuery = (e.target as HTMLInputElement).value;
+    renderTasks();
+  });
+
+  // Sort change
+  sortSelect?.addEventListener('change', (e) => {
+    activeSortOption = (e.target as HTMLSelectElement).value as any;
+    renderTasks();
+  });
+
+  // Clear completed tasks
+  clearCompletedBtn?.addEventListener('click', () => {
+    const prevLen = tasks.length;
+    tasks = tasks.filter(t => !t.completed);
+    if (tasks.length !== prevLen) {
+      saveTasks();
+      renderTasks();
+      renderTags();
+    }
+  });
+
+  // Reset defaults
+  resetBtn?.addEventListener('click', () => {
+    if (confirm('Are you sure you want to restore the default demo tasks? Your current changes will be overwritten.')) {
+      tasks = [...DEMO_TASKS];
+      customTags = ['Design', 'Work', 'Coding', 'Health', 'Personal'];
+      saveTasks();
+      saveTags();
+      activeTagFilter = null;
+      document.getElementById('tags-active-indicator')?.classList.add('hidden');
+      renderTags();
+      renderTasks();
+    }
+  });
+
+  // Export tasks as JSON
+  exportBtn?.addEventListener('click', () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ tasks, customTags }));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `airlist_backup_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  });
+
+  // Import tasks from JSON
+  importInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target?.result as string);
+        if (Array.isArray(data.tasks)) {
+          tasks = data.tasks;
+          saveTasks();
+        }
+        if (Array.isArray(data.customTags)) {
+          customTags = data.customTags;
+          saveTags();
+        }
+        renderTags();
+        renderTasks();
+        alert('Tasks backup imported successfully!');
+      } catch (err) {
+        alert('Failed to parse backup JSON file. Ensure it is a valid AirList - SNM export file.');
+      }
+    };
+    reader.readAsText(file);
+    // Reset file input
+    importInput.value = '';
+  });
+
+  // Initial render lifecycle
+  loadData();
+  renderTags();
+  renderTasks();
+</script>

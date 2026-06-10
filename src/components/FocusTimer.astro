@@ -1,0 +1,264 @@
+---
+---
+
+<div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-6 shadow-level-3 hover:shadow-level-4 transition-all duration-300">
+  <div class="flex items-center justify-between mb-4 pb-3 border-b border-hairline dark:border-zinc-900">
+    <div class="flex items-center space-x-2">
+      <!-- Minimalist Stopwatch Icon -->
+      <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span class="text-xs font-mono font-medium tracking-wider text-body dark:text-zinc-400 uppercase">Focus session</span>
+    </div>
+    <span id="timer-status-dot" class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+  </div>
+
+  <!-- Timer Modes (Pills) -->
+  <div class="flex items-center justify-center space-x-1.5 mb-6 bg-canvas-soft-2 dark:bg-zinc-900/60 p-1 rounded-md border border-hairline dark:border-zinc-800/80">
+    <button id="mode-focus" class="flex-1 text-[11px] font-sans font-medium py-1.5 px-3 rounded text-ink dark:text-zinc-100 bg-white dark:bg-zinc-800 border border-hairline dark:border-zinc-700 cursor-pointer select-none transition-all">
+      Focus
+    </button>
+    <button id="mode-short" class="flex-1 text-[11px] font-sans font-medium py-1.5 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">
+      Short
+    </button>
+    <button id="mode-long" class="flex-1 text-[11px] font-sans font-medium py-1.5 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">
+      Long
+    </button>
+  </div>
+
+  <!-- Clock & Circular Visual indicator -->
+  <div class="relative flex flex-col items-center justify-center my-6">
+    <!-- Pulse backdrop ring (grows when running) -->
+    <div id="timer-pulse" class="absolute w-36 h-36 rounded-full border border-cyan-400/20 dark:border-cyan-400/10 scale-100 opacity-0 pointer-events-none transition-all"></div>
+    
+    <!-- Large clock -->
+    <div id="timer-display" class="font-mono text-4xl sm:text-5xl font-semibold tracking-tight text-ink dark:text-zinc-100 select-none tabular-nums z-10">
+      25:00
+    </div>
+
+    <!-- Active Task Context Selector -->
+    <div class="w-full text-center mt-4 z-10 px-2">
+      <span class="text-[10px] font-mono text-mute dark:text-zinc-500 block uppercase tracking-wider mb-1">Focusing on</span>
+      
+      <!-- Styled custom select box for tasks -->
+      <div class="relative inline-block w-full">
+        <select 
+          id="timer-task-select" 
+          class="w-full bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-xs text-body dark:text-zinc-300 py-1.5 px-3 rounded-sm appearance-none cursor-pointer focus:outline-none focus:border-hairline-strong dark:focus:border-zinc-750 transition-colors"
+        >
+          <option value="">-- General Focus --</option>
+        </select>
+        <!-- Custom arrow -->
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-mute dark:text-zinc-500">
+          <svg class="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timer Actions -->
+  <div class="grid grid-cols-2 gap-3 mt-6">
+    <button 
+      id="timer-start-btn" 
+      class="w-full py-2 bg-primary hover:bg-primary/95 text-on-primary dark:bg-zinc-100 dark:hover:bg-white dark:text-primary text-xs font-sans font-medium rounded-pill cursor-pointer select-none transition-colors"
+    >
+      Start focus
+    </button>
+    <button 
+      id="timer-reset-btn" 
+      class="w-full py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 text-xs font-sans font-medium rounded-pill cursor-pointer select-none transition-colors"
+    >
+      Reset
+    </button>
+  </div>
+</div>
+
+<script>
+  // Timing parameters (in seconds)
+  const MODES = {
+    focus: 25 * 60,
+    short: 5 * 60,
+    long: 15 * 60
+  };
+
+  let currentMode: 'focus' | 'short' | 'long' = 'focus';
+  let timeLeft = MODES.focus;
+  let timerId: any = null;
+  let isRunning = false;
+
+  // Elements
+  const timerDisplay = document.getElementById('timer-display');
+  const startBtn = document.getElementById('timer-start-btn');
+  const resetBtn = document.getElementById('timer-reset-btn');
+  const statusDot = document.getElementById('timer-status-dot');
+  const timerPulse = document.getElementById('timer-pulse');
+  const taskSelect = document.getElementById('timer-task-select') as HTMLSelectElement;
+
+  const modeBtnFocus = document.getElementById('mode-focus');
+  const modeBtnShort = document.getElementById('mode-short');
+  const modeBtnLong = document.getElementById('mode-long');
+
+  // Web Audio Synth for alarm
+  function playAlarm() {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      
+      // Ring multiple times
+      const playBeep = (delay: number) => {
+        const osc = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime + delay); // A5 note
+        
+        gainNode.gain.setValueAtTime(0, ctx.currentTime + delay);
+        gainNode.gain.linearRampToValueAtTime(0.3, ctx.currentTime + delay + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.4);
+        
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + 0.45);
+      };
+
+      playBeep(0);
+      playBeep(0.5);
+      playBeep(1.0);
+    } catch (e) {
+      console.warn("Could not play alarm sound: ", e);
+    }
+  }
+
+  function displayTime(seconds: number) {
+    if (!timerDisplay) return;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function toggleMode(mode: 'focus' | 'short' | 'long', btn: HTMLElement | null) {
+    // Clear active classes
+    [modeBtnFocus, modeBtnShort, modeBtnLong].forEach(b => {
+      b?.classList.remove('bg-white', 'dark:bg-zinc-800', 'border', 'border-hairline', 'dark:border-zinc-700', 'text-ink', 'dark:text-zinc-100');
+      b?.classList.add('text-mute', 'dark:text-zinc-400');
+    });
+
+    // Add active classes
+    btn?.classList.remove('text-mute', 'dark:text-zinc-400');
+    btn?.classList.add('bg-white', 'dark:bg-zinc-800', 'border', 'border-hairline', 'dark:border-zinc-700', 'text-ink', 'dark:text-zinc-100');
+
+    currentMode = mode;
+    timeLeft = MODES[mode];
+    displayTime(timeLeft);
+    pauseTimer();
+  }
+
+  function updateActiveTasksList() {
+    if (!taskSelect) return;
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const activeTasks = tasks.filter((t: any) => !t.completed);
+
+    // Keep current selection if valid
+    const currentVal = taskSelect.value;
+    taskSelect.innerHTML = '<option value="">-- General Focus --</option>';
+
+    activeTasks.forEach((t: any) => {
+      const option = document.createElement('option');
+      option.value = t.id;
+      option.textContent = t.title.length > 30 ? t.title.substring(0, 30) + '...' : t.title;
+      taskSelect.appendChild(option);
+    });
+
+    if (activeTasks.some((t: any) => t.id === currentVal)) {
+      taskSelect.value = currentVal;
+    }
+  }
+
+  function startTimer() {
+    if (isRunning) return;
+    isRunning = true;
+
+    if (startBtn) startBtn.textContent = 'Pause';
+    statusDot?.classList.remove('bg-zinc-300', 'dark:bg-zinc-700');
+    statusDot?.classList.add('bg-cyan-500', 'animate-pulse');
+    timerPulse?.classList.remove('opacity-0', 'scale-100');
+    timerPulse?.classList.add('opacity-100', 'scale-110', 'animate-timer-pulse');
+
+    timerId = setInterval(() => {
+      timeLeft--;
+      displayTime(timeLeft);
+
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        playAlarm();
+        
+        // Track task completion or time focus
+        if (currentMode === 'focus' && taskSelect.value) {
+          const taskId = taskSelect.value;
+          const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+          const idx = tasks.findIndex((t: any) => t.id === taskId);
+          if (idx !== -1) {
+            // Track completed focus session on task
+            tasks[idx].focusCount = (tasks[idx].focusCount || 0) + 1;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            window.dispatchEvent(new Event('tasks-updated'));
+          }
+        }
+
+        // Auto switch mode
+        if (currentMode === 'focus') {
+          toggleMode('short', modeBtnShort);
+        } else {
+          toggleMode('focus', modeBtnFocus);
+        }
+        
+        alert(`${currentMode === 'focus' ? 'Break' : 'Focus session'} has finished!`);
+      }
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    if (!isRunning) return;
+    isRunning = false;
+    clearInterval(timerId);
+    if (startBtn) startBtn.textContent = 'Resume';
+    statusDot?.classList.remove('bg-cyan-500', 'animate-pulse');
+    statusDot?.classList.add('bg-zinc-300', 'dark:bg-zinc-700');
+    timerPulse?.classList.remove('opacity-100', 'scale-110', 'animate-timer-pulse');
+    timerPulse?.classList.add('opacity-0', 'scale-100');
+  }
+
+  function resetTimer() {
+    pauseTimer();
+    timeLeft = MODES[currentMode];
+    displayTime(timeLeft);
+    if (startBtn) startBtn.textContent = 'Start focus';
+  }
+
+  // Event Listeners
+  startBtn?.addEventListener('click', () => {
+    if (isRunning) {
+      pauseTimer();
+    } else {
+      startTimer();
+    }
+  });
+
+  resetBtn?.addEventListener('click', resetTimer);
+
+  modeBtnFocus?.addEventListener('click', () => toggleMode('focus', modeBtnFocus));
+  modeBtnShort?.addEventListener('click', () => toggleMode('short', modeBtnShort));
+  modeBtnLong?.addEventListener('click', () => toggleMode('long', modeBtnLong));
+
+  // Sync tasks on task update event
+  window.addEventListener('tasks-updated', updateActiveTasksList);
+  window.addEventListener('storage', updateActiveTasksList);
+
+  // Initialize
+  displayTime(timeLeft);
+  updateActiveTasksList();
+</script>
