@@ -27,13 +27,13 @@ const {
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		
-		<!-- Google Fonts for Inter and JetBrains Mono -->
+		<!-- Google Fonts for Inter, Space Mono, and JetBrains Mono -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
 		
 		<meta name="generator" content={Astro.generator} />
-
+ 
 		<!-- Inline script to detect and apply theme instantly to avoid light-flash -->
 		<script is:inline>
 			(function() {
@@ -46,7 +46,7 @@ const {
 			})();
 		</script>
 	</head>
-	<body class="text-ink dark:text-zinc-200 bg-canvas-soft dark:bg-[#0a0a0a] min-h-screen selection:bg-primary selection:text-on-primary dark:selection:bg-canvas dark:selection:text-primary transition-colors duration-200">
+	<body class="text-ink dark:text-zinc-200 bg-canvas-soft dark:bg-[#070707] nothing-grid min-h-screen selection:bg-nothing-red selection:text-white transition-colors duration-200">
 		<slot />
 	</body>
 </html>

@@ -1,55 +1,56 @@
 ---
 ---
 
-<div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-lg p-6 shadow-level-3 hover:shadow-level-4 transition-all duration-300">
+<div class="bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-900 rounded-2xl p-6 shadow-level-3 hover:shadow-level-4 transition-all duration-300">
   <div class="flex items-center justify-between mb-4 pb-3 border-b border-hairline dark:border-zinc-900">
     <div class="flex items-center space-x-2">
-      <!-- Minimalist Stopwatch Icon -->
-      <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <!-- Stopwatch Icon -->
+      <svg class="w-4 h-4 text-mute dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
       </svg>
-      <span class="text-xs font-mono font-medium tracking-wider text-body dark:text-zinc-400 uppercase">Focus session</span>
+      <span class="text-[10px] font-mono font-bold tracking-[0.15em] text-body dark:text-zinc-400 uppercase">Focus session</span>
     </div>
-    <span id="timer-status-dot" class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700"></span>
+    <span id="timer-status-dot" class="w-2 h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 transition-colors duration-300" aria-label="Timer status"></span>
   </div>
 
   <!-- Timer Modes (Pills) -->
-  <div class="flex items-center justify-center space-x-1.5 mb-6 bg-canvas-soft-2 dark:bg-zinc-900/60 p-1 rounded-md border border-hairline dark:border-zinc-800/80">
-    <button id="mode-focus" class="flex-1 text-[11px] font-sans font-medium py-1.5 px-3 rounded text-ink dark:text-zinc-100 bg-white dark:bg-zinc-800 border border-hairline dark:border-zinc-700 cursor-pointer select-none transition-all">
+  <div class="flex items-center justify-center space-x-1.5 mb-6 bg-canvas-soft dark:bg-zinc-900/60 p-1 rounded-xl border border-hairline dark:border-zinc-800" role="group" aria-label="Focus mode selection">
+    <button id="mode-focus" class="flex-1 text-[11px] font-mono font-bold py-1.5 px-3 rounded-lg text-ink dark:text-zinc-100 bg-white dark:bg-zinc-800 border border-hairline dark:border-zinc-700 cursor-pointer select-none transition-all">
       Focus
     </button>
-    <button id="mode-short" class="flex-1 text-[11px] font-sans font-medium py-1.5 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">
+    <button id="mode-short" class="flex-1 text-[11px] font-mono font-bold py-1.5 px-3 rounded-lg text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">
       Short
     </button>
-    <button id="mode-long" class="flex-1 text-[11px] font-sans font-medium py-1.5 px-3 rounded text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">
+    <button id="mode-long" class="flex-1 text-[11px] font-mono font-bold py-1.5 px-3 rounded-lg text-mute hover:text-ink dark:text-zinc-400 dark:hover:text-zinc-200 cursor-pointer select-none transition-all">
       Long
     </button>
   </div>
 
   <!-- Clock & Circular Visual indicator -->
   <div class="relative flex flex-col items-center justify-center my-6">
-    <!-- Pulse backdrop ring (grows when running) -->
-    <div id="timer-pulse" class="absolute w-36 h-36 rounded-full border border-cyan-400/20 dark:border-cyan-400/10 scale-100 opacity-0 pointer-events-none transition-all"></div>
+    <!-- Pulse backdrop ring (grows when running) - Nothing Red -->
+    <div id="timer-pulse" class="absolute w-36 h-36 rounded-full border-2 border-nothing-red/25 dark:border-nothing-red/15 scale-100 opacity-0 pointer-events-none transition-all" aria-hidden="true"></div>
     
-    <!-- Large clock -->
-    <div id="timer-display" class="font-mono text-4xl sm:text-5xl font-semibold tracking-tight text-ink dark:text-zinc-100 select-none tabular-nums z-10">
+    <!-- Large clock — Space Mono display -->
+    <div id="timer-display" class="font-mono text-4xl sm:text-5xl font-bold tracking-[-1px] text-ink dark:text-zinc-100 select-none tabular-nums z-10">
       25:00
     </div>
 
     <!-- Active Task Context Selector -->
     <div class="w-full text-center mt-4 z-10 px-2">
-      <span class="text-[10px] font-mono text-mute dark:text-zinc-500 block uppercase tracking-wider mb-1">Focusing on</span>
+      <span class="text-[10px] font-mono text-mute dark:text-zinc-500 block uppercase tracking-[0.12em] mb-1.5">Focusing on</span>
       
       <!-- Styled custom select box for tasks -->
       <div class="relative inline-block w-full">
         <select 
           id="timer-task-select" 
-          class="w-full bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-xs text-body dark:text-zinc-300 py-1.5 px-3 rounded-sm appearance-none cursor-pointer focus:outline-none focus:border-hairline-strong dark:focus:border-zinc-750 transition-colors"
+          aria-label="Select task to focus on"
+          class="w-full bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800 text-xs font-mono text-body dark:text-zinc-300 py-2 px-3 rounded-xl appearance-none cursor-pointer focus:outline-none focus:border-nothing-red dark:focus:border-nothing-red transition-colors"
         >
           <option value="">-- General Focus --</option>
         </select>
         <!-- Custom arrow -->
-        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-mute dark:text-zinc-500">
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-mute dark:text-zinc-500" aria-hidden="true">
           <svg class="fill-current h-3 w-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
           </svg>
@@ -62,13 +63,13 @@
   <div class="grid grid-cols-2 gap-3 mt-6">
     <button 
       id="timer-start-btn" 
-      class="w-full py-2 bg-primary hover:bg-primary/95 text-on-primary dark:bg-zinc-100 dark:hover:bg-white dark:text-primary text-xs font-sans font-medium rounded-pill cursor-pointer select-none transition-colors"
+      class="w-full py-2.5 bg-primary hover:bg-nothing-red text-on-primary dark:bg-zinc-100 dark:hover:bg-nothing-red dark:hover:text-white dark:text-primary text-xs font-mono font-bold rounded-xl cursor-pointer select-none transition-all duration-200"
     >
       Start focus
     </button>
     <button 
       id="timer-reset-btn" 
-      class="w-full py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 text-xs font-sans font-medium rounded-pill cursor-pointer select-none transition-colors"
+      class="w-full py-2.5 bg-transparent hover:bg-canvas-soft dark:hover:bg-zinc-900 text-ink dark:text-zinc-200 border border-hairline dark:border-zinc-800 hover:border-nothing-red dark:hover:border-nothing-red text-xs font-mono font-bold rounded-xl cursor-pointer select-none transition-all duration-200"
     >
       Reset
     </button>
@@ -169,7 +170,7 @@
     activeTasks.forEach((t: any) => {
       const option = document.createElement('option');
       option.value = t.id;
-      option.textContent = t.title.length > 30 ? t.title.substring(0, 30) + '...' : t.title;
+      option.textContent = t.title.length > 30 ? t.title.substring(0, 30) + '…' : t.title;
       taskSelect.appendChild(option);
     });
 
@@ -183,8 +184,8 @@
     isRunning = true;
 
     if (startBtn) startBtn.textContent = 'Pause';
-    statusDot?.classList.remove('bg-zinc-300', 'dark:bg-zinc-700');
-    statusDot?.classList.add('bg-cyan-500', 'animate-pulse');
+    statusDot?.classList.remove('bg-zinc-200', 'dark:bg-zinc-800');
+    statusDot?.classList.add('bg-nothing-red', 'animate-indicator-pulse');
     timerPulse?.classList.remove('opacity-0', 'scale-100');
     timerPulse?.classList.add('opacity-100', 'scale-110', 'animate-timer-pulse');
 
@@ -226,8 +227,8 @@
     isRunning = false;
     clearInterval(timerId);
     if (startBtn) startBtn.textContent = 'Resume';
-    statusDot?.classList.remove('bg-cyan-500', 'animate-pulse');
-    statusDot?.classList.add('bg-zinc-300', 'dark:bg-zinc-700');
+    statusDot?.classList.remove('bg-nothing-red', 'animate-indicator-pulse');
+    statusDot?.classList.add('bg-zinc-200', 'dark:bg-zinc-800');
     timerPulse?.classList.remove('opacity-100', 'scale-110', 'animate-timer-pulse');
     timerPulse?.classList.add('opacity-0', 'scale-100');
   }

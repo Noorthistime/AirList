@@ -1,48 +1,46 @@
 ---
 ---
 
-<section class="relative overflow-hidden py-16 sm:py-20 border-b border-hairline dark:border-zinc-900 bg-canvas dark:bg-[#070707] transition-colors duration-200">
-  <!-- Interactive Mesh Gradient Background -->
-  <div class="absolute inset-0 pointer-events-none overflow-hidden select-none">
-    <!-- Spot 1: Develop (Blue-Teal) -->
-    <div class="absolute w-[350px] h-[350px] rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 dark:from-cyan-500 dark:to-blue-600 opacity-[0.14] dark:opacity-[0.22] blur-[90px] -top-12 left-[10%] animate-mesh-1"></div>
-    <!-- Spot 2: Preview (Violet-Pink) -->
-    <div class="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-violet-500 to-highlight-pink opacity-[0.12] dark:opacity-[0.18] blur-[100px] -top-24 right-[15%] animate-mesh-2"></div>
-    <!-- Spot 3: Ship (Orange-Amber) -->
-    <div class="absolute w-[300px] h-[300px] rounded-full bg-gradient-to-tr from-orange-400 to-amber-500 opacity-[0.10] dark:opacity-[0.15] blur-[80px] top-10 left-[40%] animate-mesh-3"></div>
+<section class="relative overflow-hidden py-16 sm:py-20 border-b border-hairline dark:border-zinc-900 bg-canvas dark:bg-[#0a0a0a] transition-colors duration-200">
+  <!-- Apple-style ambient glow backdrop (replaces Vercel mesh) -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+    <!-- Soft centered glow – red tinted, Apple-like -->
+    <div class="absolute w-[500px] h-[500px] rounded-full bg-nothing-red/5 dark:bg-nothing-red/8 blur-[120px] -top-32 left-[30%] -translate-x-1/2"></div>
+    <!-- Secondary cool ambient light -->
+    <div class="absolute w-[400px] h-[400px] rounded-full bg-zinc-400/10 dark:bg-zinc-600/10 blur-[100px] top-20 right-[5%]"></div>
   </div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
       <!-- Title & Headline -->
       <div class="lg:col-span-6 space-y-6 text-left">
-        <!-- Eyebrow banner -->
-        <div class="inline-flex items-center space-x-2 bg-canvas-soft dark:bg-zinc-900 border border-hairline dark:border-zinc-800/80 px-2.5 py-1 rounded-full text-xs font-mono text-body dark:text-zinc-400 select-none">
-          <span class="flex h-2 w-2 relative">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+        <!-- Nothing Tech style eyebrow tag -->
+        <div class="inline-flex items-center space-x-2.5 bg-white dark:bg-zinc-950 border border-hairline dark:border-zinc-800 px-3 py-1.5 rounded-full text-xs font-mono text-body dark:text-zinc-400 select-none shadow-level-1">
+          <span class="flex h-2 w-2 relative flex-shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-nothing-red opacity-60"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-nothing-red"></span>
           </span>
-          <span>Introducing AirList - SNM v1.0.</span>
+          <span>Introducing AirList&nbsp;v1.0.</span>
         </div>
 
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold tracking-[-1.8px] sm:tracking-[-2.4px] text-ink dark:text-zinc-100 leading-none select-none">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-mono font-bold tracking-[-1.5px] sm:tracking-[-2px] text-ink dark:text-zinc-100 leading-none select-none" style="text-wrap: balance;">
           Organize with absolute precision.
         </h1>
         
         <p class="text-base sm:text-lg text-body dark:text-zinc-400 font-sans max-w-xl leading-relaxed">
-          AirList - SNM is an elegant, keyboard-friendly command-centric list planner designed for builders who value clean interfaces and responsive execution.
+          AirList is an elegant, keyboard-friendly command-centric task manager designed for builders who value clean interfaces and responsive execution.
         </p>
 
         <div class="flex items-center space-x-3 pt-2">
           <button 
             id="hero-create-btn"
-            class="px-6 py-2.5 bg-primary text-on-primary dark:bg-zinc-100 dark:text-primary hover:bg-primary/95 dark:hover:bg-white text-sm font-sans font-medium rounded-pill shadow-level-2 hover:shadow-level-3 cursor-pointer select-none transition-all duration-200"
+            class="px-6 py-2.5 bg-primary text-on-primary dark:bg-zinc-100 dark:text-primary hover:bg-nothing-red dark:hover:bg-nothing-red dark:hover:text-white text-sm font-mono font-bold rounded-xl shadow-level-2 hover:shadow-level-3 cursor-pointer select-none transition-all duration-200"
           >
             Create first task
           </button>
           <button 
             id="hero-help-btn"
-            class="px-6 py-2.5 bg-white text-ink dark:bg-zinc-900 dark:text-zinc-200 border border-hairline dark:border-zinc-800 hover:border-hairline-strong dark:hover:border-zinc-700 text-sm font-sans font-medium rounded-pill shadow-level-2 cursor-pointer select-none transition-all duration-200"
+            class="px-6 py-2.5 bg-transparent text-ink dark:text-zinc-200 border border-hairline dark:border-zinc-700 hover:border-nothing-red dark:hover:border-nothing-red hover:text-nothing-red text-sm font-mono font-bold rounded-xl shadow-level-1 cursor-pointer select-none transition-all duration-200"
           >
             Keyboard commands
           </button>
@@ -51,29 +49,29 @@
 
       <!-- Live Dashboard Panel -->
       <div class="lg:col-span-6 w-full">
-        <div class="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border border-hairline dark:border-zinc-850 rounded-lg p-6 sm:p-8 shadow-level-3 dark:shadow-2xl transition-colors duration-200">
+        <div class="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-hairline dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-level-4 transition-colors duration-200">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xs font-mono uppercase tracking-wider text-body dark:text-zinc-400">Productivity dashboard</h2>
-            <span class="text-[10px] font-mono text-mute dark:text-zinc-500 bg-canvas-soft-2 dark:bg-zinc-900 border border-hairline dark:border-zinc-800 px-2 py-0.5 rounded-sm">LIVE UPDATING</span>
+            <h2 class="text-[10px] font-mono uppercase tracking-[0.15em] text-body dark:text-zinc-400">Productivity dashboard</h2>
+            <span class="text-[9px] font-mono text-nothing-red bg-nothing-red/8 dark:bg-nothing-red/10 border border-nothing-red/20 px-2 py-0.5 rounded-full">● LIVE</span>
           </div>
 
           <!-- Quick Stats Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
-              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Total tasks</span>
-              <span id="hero-total-tasks" class="text-2xl font-mono font-semibold text-ink dark:text-zinc-100">0</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div class="bg-canvas-soft dark:bg-zinc-900/60 border border-hairline dark:border-zinc-800 p-4 rounded-xl text-left">
+              <span class="block text-[10px] font-sans text-mute dark:text-zinc-500 mb-1.5 uppercase tracking-wide">Total</span>
+              <span id="hero-total-tasks" class="text-2xl font-mono font-bold text-ink dark:text-zinc-100 tabular-nums">0</span>
             </div>
-            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
-              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Completed</span>
-              <span id="hero-completed-tasks" class="text-2xl font-mono font-semibold text-link dark:text-cyan-400">0</span>
+            <div class="bg-canvas-soft dark:bg-zinc-900/60 border border-hairline dark:border-zinc-800 p-4 rounded-xl text-left">
+              <span class="block text-[10px] font-sans text-mute dark:text-zinc-500 mb-1.5 uppercase tracking-wide">Done</span>
+              <span id="hero-completed-tasks" class="text-2xl font-mono font-bold text-nothing-red tabular-nums">0</span>
             </div>
-            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
-              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Pending</span>
-              <span id="hero-pending-tasks" class="text-2xl font-mono font-semibold text-warning-deep dark:text-amber-500">0</span>
+            <div class="bg-canvas-soft dark:bg-zinc-900/60 border border-hairline dark:border-zinc-800 p-4 rounded-xl text-left">
+              <span class="block text-[10px] font-sans text-mute dark:text-zinc-500 mb-1.5 uppercase tracking-wide">Pending</span>
+              <span id="hero-pending-tasks" class="text-2xl font-mono font-bold text-warning-deep dark:text-amber-500 tabular-nums">0</span>
             </div>
-            <div class="bg-canvas-soft dark:bg-zinc-900/40 border border-hairline dark:border-zinc-900 p-4 rounded-md text-left">
-              <span class="block text-xs font-sans text-mute dark:text-zinc-500 mb-1">Overdue</span>
-              <span id="hero-overdue-tasks" class="text-2xl font-mono font-semibold text-error dark:text-red-500">0</span>
+            <div class="bg-canvas-soft dark:bg-zinc-900/60 border border-hairline dark:border-zinc-800 p-4 rounded-xl text-left">
+              <span class="block text-[10px] font-sans text-mute dark:text-zinc-500 mb-1.5 uppercase tracking-wide">Overdue</span>
+              <span id="hero-overdue-tasks" class="text-2xl font-mono font-bold text-error tabular-nums">0</span>
             </div>
           </div>
 
@@ -83,13 +81,13 @@
             <div class="sm:col-span-5 flex flex-col items-center justify-center p-2">
               <div class="relative w-28 h-28 flex items-center justify-center">
                 <!-- SVG Circle Background & Foreground -->
-                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
                   <circle class="text-hairline dark:text-zinc-800" stroke-width="6" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
-                  <circle id="hero-score-ring" class="text-primary dark:text-cyan-400 transition-all duration-500 ease-out" stroke-width="7" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
+                  <circle id="hero-score-ring" class="text-nothing-red transition-all duration-500 ease-out" stroke-width="7" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" />
                 </svg>
                 <div class="absolute text-center">
-                  <span id="hero-score-num" class="text-xl font-mono font-semibold text-ink dark:text-zinc-100">0%</span>
-                  <span class="block text-[8px] font-mono text-mute dark:text-zinc-500 uppercase tracking-widest leading-none mt-0.5">COMPLETED</span>
+                  <span id="hero-score-num" class="text-xl font-mono font-bold text-ink dark:text-zinc-100 tabular-nums">0%</span>
+                  <span class="block text-[8px] font-mono text-mute dark:text-zinc-500 uppercase tracking-[0.15em] leading-none mt-0.5">DONE</span>
                 </div>
               </div>
             </div>
@@ -97,13 +95,13 @@
             <!-- Mini Sparkline Area Chart -->
             <div class="sm:col-span-7 flex flex-col justify-between h-full space-y-2">
               <div>
-                <span class="text-xs font-sans font-medium text-ink dark:text-zinc-200">Completion trend</span>
-                <p class="text-[11px] text-mute dark:text-zinc-500">Percentage rate over recent days.</p>
+                <span class="text-xs font-mono font-bold text-ink dark:text-zinc-200">Completion trend</span>
+                <p class="text-[11px] text-mute dark:text-zinc-500 font-sans">Percentage rate over recent days.</p>
               </div>
               
               <!-- Dynamic sparkline container -->
               <div class="h-16 w-full pt-1">
-                <svg id="hero-sparkline" class="w-full h-full text-link dark:text-cyan-400" viewBox="0 0 100 30" preserveAspectRatio="none">
+                <svg id="hero-sparkline" class="w-full h-full text-nothing-red" viewBox="0 0 100 30" preserveAspectRatio="none" aria-label="Task completion trend chart">
                   <defs>
                     <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stop-color="currentColor" stop-opacity="0.25" />
@@ -118,7 +116,7 @@
               </div>
 
               <!-- Sparkline labels -->
-              <div class="flex justify-between font-mono text-[9px] text-mute dark:text-zinc-500 border-t border-hairline dark:border-zinc-900 pt-1 select-none">
+              <div class="flex justify-between font-mono text-[9px] text-mute dark:text-zinc-500 border-t border-hairline dark:border-zinc-800 pt-1 select-none">
                 <span>7d ago</span>
                 <span>Today</span>
               </div>
